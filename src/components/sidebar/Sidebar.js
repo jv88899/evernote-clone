@@ -11,6 +11,10 @@ class Sidebar extends Component {
         title: null
     }
 
+    deleteNote = () => {
+        console.log('delete note')
+    }
+
     newNoteBtnClick = () => {
         this.setState({
             addingNote: !this.state.addingNote,
@@ -23,46 +27,72 @@ class Sidebar extends Component {
         console.log(this.state)
     }
 
+    selectNote = () => {
+        console.log('select note')
+    }
+
     updateTitle = txt => {
         this.setState({ title: txt })
     }
 
     render() {
         const { notes, classes, selectedNoteIndex } = this.props
-        return (
-            <div className={classes.sidebarContainer}>
-                <Button
-                    className={classes.newNoteBtn}
-                    onClick={this.newNoteBtnClick}
-                >
+
+        if (notes) {
+            return (
+                <div className={classes.sidebarContainer}>
+                    <Button
+                        className={classes.newNoteBtn}
+                        onClick={this.newNoteBtnClick}
+                    >
+                        {this.state.addingNote ? 'Cancel' : 'New Note'}
+                    </Button>
                     {
                         this.state.addingNote
-                            ? 'Cancel'
-                            : 'New Note'
+                            ?
+                            <div>
+                                <input
+                                    type='text'
+                                    className={classes.newNoteInput}
+                                    placeholder='Enter note title'
+                                    onKeyUp={ e => this.updateTitle(e.target.value) }
+                                >
+                                </input>
+                                <Button
+                                    className={classes.newNoteSubmitBtn}
+                                    onClick={this.newNote}
+                                >
+                                    Submit
+                                </Button>
+                            </div>
+                            : null
                     }
-                </Button>
-                {
-                    this.state.addingNote
-                        ?
-                        <div>
-                            <input
-                                type='text'
-                                className={classes.newNoteInput}
-                                placeholder='Enter note title'
-                                onKeyUp={ e => this.updateTitle(e.target.value) }
-                            >
-                            </input>
-                            <Button
-                                className={classes.newNoteSubmitBtn}
-                                onClick={this.newNote}
-                            >
-                                Submit
-                            </Button>
-                        </div>
-                        : null
-                }
-            </div>
-        )
+                    <List>
+                        {
+                            notes.map( (note, index) => {
+                                return (
+                                    <div key={index}>
+                                        <SidebarItem
+                                            note={note}
+                                            index={index}
+                                            selectedNoteIndex={selectedNoteIndex}
+                                            selectNote={this.selectNote}
+                                            deleteNote={this.deleteNote}
+                                        >
+                                        </SidebarItem>
+                                        <Divider></Divider>
+                                    </div>
+                                )
+                            })
+                        }
+                    </List>
+                </div>
+            )
+        } else {
+            return (
+                <div></div>
+            )
+        }
     }
 }
 
